@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draguz Shop - Generador de Mockups y DTF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Herramienta de Producción y Mockups</h1>
+        <div class="tabs">
+            <button class="tab-btn active" data-target="tab-bg">1. Quitar Fondo (Prep DTF)</button>
+            <button class="tab-btn" data-target="tab-mockup">2. Mockup en Playera</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- PESTAÑA 1: QUITAR FONDO -->
+        <section id="tab-bg" class="tab-content active">
+            <div class="panel">
+                <h2>Limpieza de Imagen</h2>
+                <div class="dropzone" id="dropzone-bg">
+                    <p>Arrastra tu imagen aquí o haz clic para subir</p>
+                    <input type="file" id="file-bg" accept="image/*">
+                </div>
+                
+                <div class="controls" id="bg-controls" style="display: none;">
+                    <label>Tolerancia de borrado (Fondo Blanco): <span id="tol-val">200</span></label>
+                    <input type="range" id="tolerance" min="0" max="255" value="200">
+                    <button id="btn-remove-bg" class="action-btn">Quitar Fondo</button>
+                    <button id="btn-download-clean" class="action-btn success">Descargar PNG Transparente</button>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="canvas-bg"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTAÑA 2: MOCKUP -->
+        <section id="tab-mockup" class="tab-content">
+            <div class="panel">
+                <h2>Vista Previa del Mockup</h2>
+                <p class="helper-text">Área de impresión frontal. Verifica que el diseño principal (como la araña o el logo) quede bien posicionado al frente y no en la espalda.</p>
+                
+                <div class="mockup-workspace">
+                    <div class="controls mockup-controls">
+                        <h3>Ajustes del Arte</h3>
+                        <label>Tamaño:</label>
+                        <input type="range" id="mock-scale" min="10" max="150" value="50">
+                        <label>Posición Vertical:</label>
+                        <input type="range" id="mock-y" min="-200" max="400" value="100">
+                        <label>Posición Horizontal:</label>
+                        <input type="range" id="mock-x" min="-200" max="200" value="0">
+                        
+                        <button id="btn-download-mockup" class="action-btn success">Guardar Mockup</button>
+                    </div>
+                    
+                    <div class="canvas-container mockup-container">
+                        <canvas id="canvas-mockup" width="500" height="600"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
