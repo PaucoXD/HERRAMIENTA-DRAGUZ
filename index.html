@@ -329,8 +329,8 @@ document.querySelectorAll('.tab').forEach(t=>{
   scene.add(modelContainer);
 
   const loader = new THREE.GLTFLoader();
-  // Ruta absoluta basada en la URL actual para evitar errores en GitHub Pages
-  const modelUrl = new URL('playera.glb', window.location.href).href;
+  // Enlace directo al archivo crudo en tu repositorio público de GitHub
+  const modelUrl = 'https://raw.githubusercontent.com/PaucoXD/HERRAMIENTA-DRAGUZ/main/playera.glb';
 
   loader.load(modelUrl, function(gltf) {
     document.getElementById('mockLoading').style.display = 'none';
