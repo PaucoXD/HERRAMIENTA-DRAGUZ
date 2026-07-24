@@ -329,7 +329,8 @@ document.querySelectorAll('.tab').forEach(t=>{
   scene.add(modelContainer);
 
   const loader = new THREE.GLTFLoader();
-  const modelUrl = 'playera.glb'; // Asegúrate de tener este archivo en la misma carpeta
+  // Ruta absoluta basada en la URL actual para evitar errores en GitHub Pages
+  const modelUrl = new URL('playera.glb', window.location.href).href;
 
   loader.load(modelUrl, function(gltf) {
     document.getElementById('mockLoading').style.display = 'none';
@@ -349,17 +350,17 @@ document.querySelectorAll('.tab').forEach(t=>{
 
     modelContainer.add(model);
     render();
-    console.log("✅ Playera cargada");
+    console.log("✅ Playera cargada correctamente");
   }, undefined, function(error) {
-    console.error("Error:", error);
-    document.getElementById('mockLoading').innerText = 'Error cargando playera.glb';
+    console.error("Error cargando GLB:", error);
+    document.getElementById('mockLoading').innerText = 'Error al cargar playera.glb';
   });
 
   function render() { 
     renderer.render(scene, camera); 
   }
 
-  // Controles de Rotación Manuales integrados correctamente
+  // Controles de Rotación Manuales
   let isDragging = false;
   let previousMousePosition = { x: 0, y: 0 };
   
