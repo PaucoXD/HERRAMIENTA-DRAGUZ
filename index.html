@@ -330,15 +330,17 @@ document.querySelectorAll('.tab').forEach(t=>{
 
   const loader = new THREE.GLTFLoader();
 
-  // === CARGA DESDE ARCHIVO LOCAL ===
-  loader.load('playera.glb', function(gltf) {
+  // ←←← CAMBIA ESTA LÍNEA con la URL de tu archivo
+  const modelUrl = 'playera.glb';   // Si está en la misma carpeta
+
+  loader.load(modelUrl, function(gltf) {
     document.getElementById('mockLoading').style.display = 'none';
     const model = gltf.scene;
     
     const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
     model.position.sub(center);
-    model.scale.setScalar(2.2); // Ajusta este número si la playera se ve muy grande o muy pequeña
+    model.scale.setScalar(2.0); // Ajusta este valor según el tamaño de tu modelo
 
     model.traverse((child) => {
       if (child.isMesh) {
@@ -349,13 +351,13 @@ document.querySelectorAll('.tab').forEach(t=>{
 
     modelContainer.add(model);
     render();
-    console.log("✅ Modelo cargado correctamente");
+    console.log("✅ Playera cargada");
   }, undefined, function(error) {
-    console.error("Error cargando GLB:", error);
-    document.getElementById('mockLoading').innerText = 'Error al cargar playera.glb - Revisa que el archivo esté en la misma carpeta';
+    console.error("Error:", error);
+    document.getElementById('mockLoading').innerText = 'Error cargando playera.glb';
   });
 
-  // Controles de rotación, zoom, etc. (se mantienen)
+  // Resto de controles (rotación, zoom, etc.)
   let isDragging = false;
   let previousMousePosition = { x: 0, y: 0 };
   
@@ -377,13 +379,8 @@ document.querySelectorAll('.tab').forEach(t=>{
     render();
   });
 
-  function render() {
-    renderer.render(scene, camera);
-  }
-
-  // El resto del código (textura, botones, etc.) se mantiene igual...
+  function render() { renderer.render(scene, camera); }
 })();
-
   // Controles de Rotación Manuales (Sin alterar el HTML para inyectar scripts externos de OrbitControls)
   let isDragging = false;
   let previousMousePosition = { x: 0, y: 0 };
