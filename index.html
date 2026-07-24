@@ -329,9 +329,7 @@ document.querySelectorAll('.tab').forEach(t=>{
   scene.add(modelContainer);
 
   const loader = new THREE.GLTFLoader();
-
-  // ←←← CAMBIA ESTA LÍNEA con la URL de tu archivo
-  const modelUrl = 'playera.glb';   // Si está en la misma carpeta
+  const modelUrl = 'playera.glb'; // Asegúrate de tener este archivo en la misma carpeta
 
   loader.load(modelUrl, function(gltf) {
     document.getElementById('mockLoading').style.display = 'none';
@@ -340,7 +338,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
     model.position.sub(center);
-    model.scale.setScalar(2.0); // Ajusta este valor según el tamaño de tu modelo
+    model.scale.setScalar(2.0);
 
     model.traverse((child) => {
       if (child.isMesh) {
@@ -357,56 +355,32 @@ document.querySelectorAll('.tab').forEach(t=>{
     document.getElementById('mockLoading').innerText = 'Error cargando playera.glb';
   });
 
-  // Resto de controles (rotación, zoom, etc.)
-  let isDragging = false;
-  let previousMousePosition = { x: 0, y: 0 };
-  
-  canvas.addEventListener('mousedown', () => { isDragging = true; });
-  canvas.addEventListener('mousemove', (e) => {
-    if (isDragging && modelContainer) {
-      const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
-      modelContainer.rotation.y += deltaMove.x * 0.01;
-      modelContainer.rotation.x += deltaMove.y * 0.01;
-      render();
-    }
-    previousMousePosition = { x: e.offsetX, y: e.offsetY };
-  });
-  window.addEventListener('mouseup', () => { isDragging = false; });
-  canvas.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    camera.position.z += e.deltaY * 0.005;
-    camera.position.z = Math.max(2, Math.min(camera.position.z, 15));
-    render();
-  });
-
-  function render() { renderer.render(scene, camera); }
-})();
-  // Controles de Rotación Manuales (Sin alterar el HTML para inyectar scripts externos de OrbitControls)
-  let isDragging = false;
-  let previousMousePosition = { x: 0, y: 0 };
-  
-  canvas.addEventListener('mousedown', () => { isDragging = true; });
-  canvas.addEventListener('mousemove', (e) => {
-    if (isDragging && modelContainer) {
-      const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
-      modelContainer.rotation.y += deltaMove.x * 0.01;
-      modelContainer.rotation.x += deltaMove.y * 0.01;
-      render();
-    }
-    previousMousePosition = { x: e.offsetX, y: e.offsetY };
-  });
-  window.addEventListener('mouseup', () => { isDragging = false; });
-  window.addEventListener('mouseleave', () => { isDragging = false; });
-  canvas.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    camera.position.z += e.deltaY * 0.005;
-    camera.position.z = Math.max(2, Math.min(camera.position.z, 15));
-    render();
-  });
-
-  function render() {
-    renderer.render(scene, camera);
+  function render() { 
+    renderer.render(scene, camera); 
   }
+
+  // Controles de Rotación Manuales integrados correctamente
+  let isDragging = false;
+  let previousMousePosition = { x: 0, y: 0 };
+  
+  canvas.addEventListener('mousedown', () => { isDragging = true; });
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDragging && modelContainer) {
+      const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+      modelContainer.rotation.y += deltaMove.x * 0.01;
+      modelContainer.rotation.x += deltaMove.y * 0.01;
+      render();
+    }
+    previousMousePosition = { x: e.offsetX, y: e.offsetY };
+  });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  canvas.addEventListener('mouseleave', () => { isDragging = false; });
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    camera.position.z += e.deltaY * 0.005;
+    camera.position.z = Math.max(2, Math.min(camera.position.z, 15));
+    render();
+  });
 
   // --- LÓGICA DE TEXTURIZADO Y CONTROLES ---
   let currentImg = null;
@@ -429,18 +403,15 @@ document.querySelectorAll('.tab').forEach(t=>{
     if (!shirtMesh) return;
     currentImg = img;
     
-    // Crear un canvas de 1024x1024 para fusionar color y diseño
     const tCanvas = document.createElement('canvas');
     tCanvas.width = 1024;
     tCanvas.height = 1024;
     const ctx = tCanvas.getContext('2d');
 
-    // Fondo del color seleccionado
     ctx.fillStyle = currentColor;
     ctx.fillRect(0, 0, 1024, 1024);
 
     if (img) {
-      // Cálculo de proyecciones
       const scaleFact = mockSettings.scale / 100;
       const dw = img.width * scaleFact;
       const dh = img.height * scaleFact;
@@ -459,12 +430,11 @@ document.querySelectorAll('.tab').forEach(t=>{
     texture.encoding = THREE.sRGBEncoding;
 
     shirtMesh.material.map = texture;
-    shirtMesh.material.color.set('#ffffff'); // Reset para que el mapa mande
+    shirtMesh.material.color.set('#ffffff');
     shirtMesh.material.needsUpdate = true;
     render();
   }
 
-  // Swatches UI
   document.querySelectorAll('#p-mockup .swatch').forEach(sw => {
     sw.addEventListener('click', (e) => {
       document.querySelectorAll('#p-mockup .swatch').forEach(s => s.classList.remove('sel'));
@@ -474,13 +444,11 @@ document.querySelectorAll('.tab').forEach(t=>{
     });
   });
 
-  // Inputs UI
   document.getElementById('mockScale').addEventListener('input', (e) => { mockSettings.scale = e.target.value; updateDecal(); });
   document.getElementById('mockX').addEventListener('input', (e) => { mockSettings.x = e.target.value; updateDecal(); });
   document.getElementById('mockY').addEventListener('input', (e) => { mockSettings.y = e.target.value; updateDecal(); });
   document.getElementById('mockRot').addEventListener('input', (e) => { mockSettings.rot = e.target.value; updateDecal(); });
 
-  // Botón Voltear
   document.getElementById('mockFlip').addEventListener('click', () => {
     if (modelContainer) {
       modelContainer.rotation.y += Math.PI;
@@ -488,7 +456,6 @@ document.querySelectorAll('.tab').forEach(t=>{
     }
   });
 
-  // Descarga 3D
   document.getElementById('mockDownload').addEventListener('click', () => {
     render();
     const link = document.createElement('a');
@@ -497,14 +464,13 @@ document.querySelectorAll('.tab').forEach(t=>{
     link.click();
   });
 
-  // Fix resize responsive
   window.addEventListener('resize', () => {
     camera.aspect = canvas.clientWidth / 460;
     camera.updateProjectionMatrix();
     renderer.setSize(canvas.clientWidth, 460);
     render();
   });
-;
+})();
 
 // ---------- PREPARAR ----------
 (function(){
@@ -623,7 +589,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i], g = data[i + 1], b = data[i + 2];
       const dist = Math.sqrt(Math.pow(r-targetColor.r,2) + Math.pow(g-targetColor.g,2) + Math.pow(b-targetColor.b,2));
-      if (dist <= tol) data[i + 3] = 0; // Transparente
+      if (dist <= tol) data[i + 3] = 0;
     }
     ctx.putImageData(imgData, 0, 0);
   });
@@ -669,7 +635,6 @@ document.querySelectorAll('.tab').forEach(t=>{
     const ctx = canvas.getContext('2d');
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imgData.data;
-    // Matriz básica para apagar un poco el RGB emulando la tinta (sin modificar ICC oficial)
     for(let i=0; i<data.length; i+=4) {
       let r = data[i], g = data[i+1], b = data[i+2];
       data[i]   = r * 0.9 + g * 0.05 + b * 0.05;
@@ -709,12 +674,10 @@ document.querySelectorAll('.tab').forEach(t=>{
 
     if (type === 'image/jpeg') {
       const ctx = canvas.getContext('2d');
-      // Crear temporal para no perder la imagen cargada en la previsualización
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
       tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
 
-      // Llenar fondo del JPG
       ctx.fillStyle = bgInput.value;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(tempCanvas, 0, 0);
