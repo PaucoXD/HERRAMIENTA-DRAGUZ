@@ -1,70 +1,731 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draguz Shop - Generador de Mockups y DTF</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draguz Tools — Kit DTF</title>
+<style>
+  :root{
+    --bg: #14110f;
+    --panel: #1c1815;
+    --panel-2: #241f1a;
+    --line: #322b24;
+    --ink: #f3ede4;
+    --ink-dim: #a89c8c;
+    --scorch: #ff7a3d;
+    --scorch-dim: #7a3c1e;
+    --ok: #7fd4a3;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); min-height:100vh;
+  }
+  .app{max-width:1180px; margin:0 auto; padding:28px 24px 60px;}
+
+  .brand{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
+  .brand .mark{
+    font-family:var(--font-display); font-weight:700; font-size:28px; letter-spacing:.5px;
+    color:var(--scorch);
+  }
+  .brand .sub{color:var(--ink-dim); font-size:13px; letter-spacing:.08em; text-transform:uppercase;}
+  .lede{color:var(--ink-dim); font-size:14.5px; max-width:560px; margin:10px 0 28px; line-height:1.5;}
+
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:22px;}
+  .tab{
+    background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+    padding:9px 16px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer;
+    font-family:var(--font-body); transition:.15s;
+  }
+  .tab:hover{color:var(--ink); border-color:#4a4038;}
+  .tab.active{background:var(--scorch); color:#1a0e06; border-color:var(--scorch);}
+
+  .panel{display:none;}
+  .panel.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .grid{display:grid; grid-template-columns: 1.1fr 1fr; gap:24px;}
+  @media (max-width:860px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px;
+  }
+  .card h3{margin:0 0 4px; font-family:var(--font-display); font-size:19px; font-weight:600;}
+  .card .desc{color:var(--ink-dim); font-size:13px; margin:0 0 16px; line-height:1.45;}
+
+  .drop{
+    border:1.5px dashed #4a4038; border-radius:10px; padding:26px 16px; text-align:center;
+    color:var(--ink-dim); font-size:13.5px; cursor:pointer; transition:.15s;
+  }
+  .drop:hover{border-color:var(--scorch); color:var(--ink);}
+  .drop input{display:none;}
+
+  .stage{
+    background: repeating-conic-gradient(#211c18 0% 25%, #17130f 0% 50%) 0/18px 18px;
+    border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center;
+    min-height:340px; position:relative;
+  }
+  canvas{max-width:100%; display:block;}
+  #mockCanvas{width:100%; height:460px; display:block; outline: none; touch-action: none;}
+
+  label{display:block; font-size:12px; color:var(--ink-dim); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.05em;}
+  input[type=range]{width:100%; accent-color:var(--scorch);}
+  input[type=number], select{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--ink);
+    padding:8px 10px; border-radius:7px; font-size:13.5px; font-family:var(--font-body);
+  }
+  .row{display:flex; gap:10px;}
+  .row > *{flex:1;}
+
+  .swatches{display:flex; gap:8px; margin-top:6px;}
+  .swatch{width:28px; height:28px; border-radius:50%; border:2px solid var(--line); cursor:pointer;}
+  .swatch.sel{border-color:var(--scorch);}
+
+  .btn{
+    background:var(--scorch); color:#1a0e06; border:none; padding:11px 18px; border-radius:8px;
+    font-weight:700; font-size:13.5px; cursor:pointer; margin-top:16px; width:100%;
+    font-family:var(--font-body);
+  }
+  .btn:disabled{background:#4a4038; color:#8a7f72; cursor:not-allowed;}
+  .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
+
+  .note{font-size:12px; color:var(--ink-dim); margin-top:14px; line-height:1.5; padding:10px 12px; background:var(--panel-2); border-radius:8px; border-left:2px solid var(--scorch-dim);}
+  .readout{font-size:12.5px; color:var(--ink-dim); margin-top:8px;}
+  .readout b{color:var(--ink);}
+  .soon{opacity:.55; pointer-events:none;}
+  .tag{display:inline-block; font-size:10.5px; padding:2px 7px; border-radius:20px; background:var(--scorch-dim); color:#ffd9c2; margin-left:8px; letter-spacing:.04em;}
+</style>
 </head>
 <body>
-    <header>
-        <h1>Herramienta de Producción y Mockups</h1>
-        <div class="tabs">
-            <button class="tab-btn active" data-target="tab-bg">1. Quitar Fondo (Prep DTF)</button>
-            <button class="tab-btn" data-target="tab-mockup">2. Mockup en Playera</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+<div class="app">
+  <div class="brand"><span class="mark">Draguz</span><span class="sub">Kit de Herramientas DTF</span></div>
+  <p class="lede">Preparar diseños para impresión DTF y armar mockups, todo en un solo lugar.</p>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="mockup">Mockup Playera</button>
+    <button class="tab" data-tab="preparar">Redimensionar / DPI</button>
+    <button class="tab" data-tab="fondo">Quitar Fondo</button>
+    <button class="tab" data-tab="color">Vista CMYK</button>
+    <button class="tab" data-tab="formato">Conversor PNG/JPG</button>
+  </div>
+
+  <!-- MOCKUP -->
+  <div class="panel active" id="p-mockup">
+    <div class="grid">
+      <div class="card">
+        <h3>Escenario 3D</h3>
+        <p class="desc">Playera real en 3D. Arrastra para rotar, rueda del mouse para zoom.</p>
+        <div class="stage" id="mockStage" style="min-height:460px;">
+          <canvas id="mockCanvas"></canvas>
+          <div id="mockLoading" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--ink-dim); font-size:13px; background: rgba(28,24,21,0.8); z-index: 10;">Cargando modelo 3D…</div>
         </div>
-    </header>
+      </div>
+      <div class="card">
+        <h3>Controles</h3>
+        <div class="drop" id="mockDrop">Arrastra tu diseño aquí o haz clic para elegir un archivo
+          <input type="file" id="mockFile" accept="image/*">
+        </div>
+        <label>Color de playera</label>
+        <div class="swatches">
+          <div class="swatch sel" data-color="#f2f0ec" style="background:#f2f0ec"></div>
+          <div class="swatch" data-color="#1c1c1c" style="background:#1c1c1c"></div>
+          <div class="swatch" data-color="#3d3f4a" style="background:#3d3f4a"></div>
+          <div class="swatch" data-color="#7a1f24" style="background:#7a1f24"></div>
+          <div class="swatch" data-color="#26482f" style="background:#26482f"></div>
+        </div>
+        <label>Tamaño del diseño</label>
+        <input type="range" id="mockScale" min="10" max="200" value="80">
+        <label>Posición horizontal</label>
+        <input type="range" id="mockX" min="-100" max="100" value="0">
+        <label>Posición vertical</label>
+        <input type="range" id="mockY" min="-100" max="100" value="0">
+        <label>Rotación</label>
+        <input type="range" id="mockRot" min="-30" max="30" value="0">
+        <button class="btn ghost" id="mockFlip">Voltear frente / espalda</button>
+        <div class="note">Si el diseño no queda del lado correcto de la playera, usa "Voltear" — el modelo 3D puede tener el frente hacia el otro lado.</div>
+        <button class="btn" id="mockDownload">Descargar mockup PNG</button>
+      </div>
+    </div>
+  </div>
 
-    <main>
-        <!-- PESTAÑA 1: QUITAR FONDO -->
-        <section id="tab-bg" class="tab-content active">
-            <div class="panel">
-                <h2>Limpieza de Imagen</h2>
-                <div class="dropzone" id="dropzone-bg">
-                    <p>Arrastra tu imagen aquí o haz clic para subir</p>
-                    <input type="file" id="file-bg" accept="image/*">
-                </div>
-                
-                <div class="controls" id="bg-controls" style="display: none;">
-                    <label>Tolerancia de borrado (Fondo Blanco): <span id="tol-val">200</span></label>
-                    <input type="range" id="tolerance" min="0" max="255" value="200">
-                    <button id="btn-remove-bg" class="action-btn">Quitar Fondo</button>
-                    <button id="btn-download-clean" class="action-btn success">Descargar PNG Transparente</button>
-                </div>
+  <!-- PREPARAR -->
+  <div class="panel" id="p-preparar">
+    <div class="grid">
+      <div class="card">
+        <h3>Previsualización</h3>
+        <div class="stage"><canvas id="prepCanvas" width="500" height="500"></canvas></div>
+        <div class="readout" id="prepReadout">Sube una imagen para ver sus dimensiones.</div>
+      </div>
+      <div class="card">
+        <h3>Tamaño para impresión</h3>
+        <p class="desc">Calcula el tamaño en píxeles que necesitas según el tamaño físico de impresión, y recorta los márgenes sobrantes.</p>
+        <div class="drop" id="prepDrop">Sube tu diseño
+          <input type="file" id="prepFile" accept="image/*">
+        </div>
+        <div class="row">
+          <div><label>Ancho impresión (cm)</label><input type="number" id="prepW" value="20"></div>
+          <div><label>Alto impresión (cm)</label><input type="number" id="prepH" value="25"></div>
+        </div>
+        <label>Resolución (DPI)</label>
+        <select id="prepDpi">
+          <option value="150">150 — borrador</option>
+          <option value="300" selected>300 — recomendado DTF</option>
+          <option value="400">400 — alta definición</option>
+        </select>
+        <div class="readout" id="prepTarget"></div>
+        <button class="btn" id="prepResize" disabled>Redimensionar al tamaño calculado</button>
+        <button class="btn ghost" id="prepTrim" disabled>Recortar bordes sobrantes</button>
+        <button class="btn" id="prepDownload" disabled>Descargar PNG</button>
+      </div>
+    </div>
+  </div>
 
-                <div class="canvas-container">
-                    <canvas id="canvas-bg"></canvas>
-                </div>
-            </div>
-        </section>
+  <!-- FONDO -->
+  <div class="panel" id="p-fondo">
+    <div class="grid">
+      <div class="card">
+        <h3>Resultado</h3>
+        <div class="stage"><canvas id="fondoCanvas" width="500" height="500"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Quitar fondo</h3>
+        <p class="desc">Funciona mejor con fondos lisos (blanco, verde, etc.) — usa color clave, no segmentación con IA.</p>
+        <div class="drop" id="fondoDrop">Sube tu foto o diseño
+          <input type="file" id="fondoFile" accept="image/*">
+        </div>
+        <label>Color a eliminar</label>
+        <input type="color" id="fondoColor" value="#ffffff" style="width:100%; height:38px; border:none; border-radius:7px; background:var(--panel-2);">
+        <label>Tolerancia</label>
+        <input type="range" id="fondoTol" min="5" max="150" value="40">
+        <button class="btn" id="fondoApply" disabled>Quitar fondo</button>
+        <button class="btn ghost" id="fondoDownload" disabled>Descargar PNG</button>
+        <div class="note">Para fondos complejos (fotos con fondos texturizados) esta técnica no es suficiente — se necesitaría un servicio de IA aparte; puedo agregarlo después si te sirve.</div>
+      </div>
+    </div>
+  </div>
 
-        <!-- PESTAÑA 2: MOCKUP -->
-        <section id="tab-mockup" class="tab-content">
-            <div class="panel">
-                <h2>Vista Previa del Mockup</h2>
-                <p class="helper-text">Área de impresión frontal. Verifica que el diseño principal (como la araña o el logo) quede bien posicionado al frente y no en la espalda.</p>
-                
-                <div class="mockup-workspace">
-                    <div class="controls mockup-controls">
-                        <h3>Ajustes del Arte</h3>
-                        <label>Tamaño:</label>
-                        <input type="range" id="mock-scale" min="10" max="150" value="50">
-                        <label>Posición Vertical:</label>
-                        <input type="range" id="mock-y" min="-200" max="400" value="100">
-                        <label>Posición Horizontal:</label>
-                        <input type="range" id="mock-x" min="-200" max="200" value="0">
-                        
-                        <button id="btn-download-mockup" class="action-btn success">Guardar Mockup</button>
-                    </div>
-                    
-                    <div class="canvas-container mockup-container">
-                        <canvas id="canvas-mockup" width="500" height="600"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+  <!-- COLOR -->
+  <div class="panel" id="p-color">
+    <div class="grid">
+      <div class="card">
+        <h3>Vista previa CMYK</h3>
+        <div class="stage"><canvas id="colorCanvas" width="500" height="500"></canvas></div>
+        <div class="readout" id="colorReadout">Pasa el mouse sobre la imagen para ver los valores CMYK de ese punto.</div>
+      </div>
+      <div class="card">
+        <h3>RGB → CMYK</h3>
+        <p class="desc">Simula cómo se apagan los colores al convertir a CMYK, para detectar tonos que se ven mal antes de imprimir.</p>
+        <div class="drop" id="colorDrop">Sube tu diseño
+          <input type="file" id="colorFile" accept="image/*">
+        </div>
+        <button class="btn" id="colorApply" disabled>Aplicar vista CMYK</button>
+        <button class="btn ghost" id="colorDownload" disabled>Descargar PNG</button>
+        <div class="note">Esto es una previsualización en pantalla (RGB), no genera separaciones CMYK reales. Para el archivo final de imprenta profesional, conviértelo en Photoshop o Illustrator con el perfil ICC de tu proveedor.</div>
+      </div>
+    </div>
+  </div>
 
-    <script src="app.js"></script>
+  <!-- FORMATO -->
+  <div class="panel" id="p-formato">
+    <div class="grid">
+      <div class="card">
+        <h3>Vista previa</h3>
+        <div class="stage"><canvas id="fmtCanvas" width="500" height="500"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Convertir formato <span class="tag">PNG · JPG</span></h3>
+        <div class="drop" id="fmtDrop">Sube tu imagen
+          <input type="file" id="fmtFile" accept="image/*">
+        </div>
+        <label>Formato de salida</label>
+        <select id="fmtOut">
+          <option value="image/png">PNG (con transparencia)</option>
+          <option value="image/jpeg">JPG (fondo sólido)</option>
+        </select>
+        <div id="fmtBgWrap" style="display:none;">
+          <label>Color de fondo para JPG</label>
+          <input type="color" id="fmtBg" value="#ffffff" style="width:100%; height:38px; border:none; border-radius:7px; background:var(--panel-2);">
+        </div>
+        <button class="btn" id="fmtDownload" disabled>Descargar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- Utilidades comunes ----------
+function loadImgToCanvas(file, canvas, cb){
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(canvas.width/img.width, canvas.height/img.height, 1);
+      const w = img.width, h = img.height;
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      cb && cb(img, ctx);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function download(canvas, name, type){
+  const a = document.createElement('a');
+  a.download = name;
+  a.href = canvas.toDataURL(type||'image/png', 0.92);
+  a.click();
+}
+
+document.querySelectorAll('.drop').forEach(d=>{
+  d.addEventListener('click', ()=> d.querySelector('input').click());
+  d.addEventListener('dragover', e=>{e.preventDefault(); d.style.borderColor='var(--scorch)';});
+  d.addEventListener('dragleave', ()=> d.style.borderColor='#4a4038');
+  d.addEventListener('drop', e=>{
+    e.preventDefault(); d.style.borderColor='#4a4038';
+    const input = d.querySelector('input');
+    if(e.dataTransfer.files[0]){ input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); }
+  });
+});
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('p-'+t.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- MOCKUP 3D ----------
+(function(){
+  const canvas = document.getElementById('mockCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(canvas.clientWidth, 460);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / 460, 0.1, 100);
+  camera.position.set(0, 0, 5);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+  scene.add(ambientLight);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  dirLight.position.set(2, 5, 5);
+  scene.add(dirLight);
+
+  let shirtMesh = null;
+  let modelContainer = new THREE.Group();
+  scene.add(modelContainer);
+
+  const loader = new THREE.GLTFLoader();
+
+  // === CARGA DESDE ARCHIVO LOCAL ===
+  loader.load('playera.glb', function(gltf) {
+    document.getElementById('mockLoading').style.display = 'none';
+    const model = gltf.scene;
+    
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    model.position.sub(center);
+    model.scale.setScalar(2.2); // Ajusta este número si la playera se ve muy grande o muy pequeña
+
+    model.traverse((child) => {
+      if (child.isMesh) {
+        shirtMesh = child;
+        if (shirtMesh.material) shirtMesh.material = shirtMesh.material.clone();
+      }
+    });
+
+    modelContainer.add(model);
+    render();
+    console.log("✅ Modelo cargado correctamente");
+  }, undefined, function(error) {
+    console.error("Error cargando GLB:", error);
+    document.getElementById('mockLoading').innerText = 'Error al cargar playera.glb - Revisa que el archivo esté en la misma carpeta';
+  });
+
+  // Controles de rotación, zoom, etc. (se mantienen)
+  let isDragging = false;
+  let previousMousePosition = { x: 0, y: 0 };
+  
+  canvas.addEventListener('mousedown', () => { isDragging = true; });
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDragging && modelContainer) {
+      const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+      modelContainer.rotation.y += deltaMove.x * 0.01;
+      modelContainer.rotation.x += deltaMove.y * 0.01;
+      render();
+    }
+    previousMousePosition = { x: e.offsetX, y: e.offsetY };
+  });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    camera.position.z += e.deltaY * 0.005;
+    camera.position.z = Math.max(2, Math.min(camera.position.z, 15));
+    render();
+  });
+
+  function render() {
+    renderer.render(scene, camera);
+  }
+
+  // El resto del código (textura, botones, etc.) se mantiene igual...
+})();
+
+  // Controles de Rotación Manuales (Sin alterar el HTML para inyectar scripts externos de OrbitControls)
+  let isDragging = false;
+  let previousMousePosition = { x: 0, y: 0 };
+  
+  canvas.addEventListener('mousedown', () => { isDragging = true; });
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDragging && modelContainer) {
+      const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+      modelContainer.rotation.y += deltaMove.x * 0.01;
+      modelContainer.rotation.x += deltaMove.y * 0.01;
+      render();
+    }
+    previousMousePosition = { x: e.offsetX, y: e.offsetY };
+  });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('mouseleave', () => { isDragging = false; });
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    camera.position.z += e.deltaY * 0.005;
+    camera.position.z = Math.max(2, Math.min(camera.position.z, 15));
+    render();
+  });
+
+  function render() {
+    renderer.render(scene, camera);
+  }
+
+  // --- LÓGICA DE TEXTURIZADO Y CONTROLES ---
+  let currentImg = null;
+  let currentColor = '#f2f0ec';
+  let mockSettings = { scale: 80, x: 0, y: 0, rot: 0 };
+
+  document.getElementById('mockFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => updateDecal(img);
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function updateDecal(img = currentImg) {
+    if (!shirtMesh) return;
+    currentImg = img;
+    
+    // Crear un canvas de 1024x1024 para fusionar color y diseño
+    const tCanvas = document.createElement('canvas');
+    tCanvas.width = 1024;
+    tCanvas.height = 1024;
+    const ctx = tCanvas.getContext('2d');
+
+    // Fondo del color seleccionado
+    ctx.fillStyle = currentColor;
+    ctx.fillRect(0, 0, 1024, 1024);
+
+    if (img) {
+      // Cálculo de proyecciones
+      const scaleFact = mockSettings.scale / 100;
+      const dw = img.width * scaleFact;
+      const dh = img.height * scaleFact;
+      const dx = 512 + (mockSettings.x / 100 * 512);
+      const dy = 512 - (mockSettings.y / 100 * 512);
+
+      ctx.save();
+      ctx.translate(dx, dy);
+      ctx.rotate(mockSettings.rot * Math.PI / 180);
+      ctx.drawImage(img, -dw/2, -dh/2, dw, dh);
+      ctx.restore();
+    }
+
+    const texture = new THREE.CanvasTexture(tCanvas);
+    texture.flipY = false;
+    texture.encoding = THREE.sRGBEncoding;
+
+    shirtMesh.material.map = texture;
+    shirtMesh.material.color.set('#ffffff'); // Reset para que el mapa mande
+    shirtMesh.material.needsUpdate = true;
+    render();
+  }
+
+  // Swatches UI
+  document.querySelectorAll('#p-mockup .swatch').forEach(sw => {
+    sw.addEventListener('click', (e) => {
+      document.querySelectorAll('#p-mockup .swatch').forEach(s => s.classList.remove('sel'));
+      e.target.classList.add('sel');
+      currentColor = e.target.dataset.color;
+      updateDecal();
+    });
+  });
+
+  // Inputs UI
+  document.getElementById('mockScale').addEventListener('input', (e) => { mockSettings.scale = e.target.value; updateDecal(); });
+  document.getElementById('mockX').addEventListener('input', (e) => { mockSettings.x = e.target.value; updateDecal(); });
+  document.getElementById('mockY').addEventListener('input', (e) => { mockSettings.y = e.target.value; updateDecal(); });
+  document.getElementById('mockRot').addEventListener('input', (e) => { mockSettings.rot = e.target.value; updateDecal(); });
+
+  // Botón Voltear
+  document.getElementById('mockFlip').addEventListener('click', () => {
+    if (modelContainer) {
+      modelContainer.rotation.y += Math.PI;
+      render();
+    }
+  });
+
+  // Descarga 3D
+  document.getElementById('mockDownload').addEventListener('click', () => {
+    render();
+    const link = document.createElement('a');
+    link.download = 'mockup-draguz.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  // Fix resize responsive
+  window.addEventListener('resize', () => {
+    camera.aspect = canvas.clientWidth / 460;
+    camera.updateProjectionMatrix();
+    renderer.setSize(canvas.clientWidth, 460);
+    render();
+  });
+;
+
+// ---------- PREPARAR ----------
+(function(){
+  const fileInput = document.getElementById('prepFile');
+  const canvas = document.getElementById('prepCanvas');
+  const readout = document.getElementById('prepReadout');
+  const targetReadout = document.getElementById('prepTarget');
+  const btnResize = document.getElementById('prepResize');
+  const btnTrim = document.getElementById('prepTrim');
+  const btnDownload = document.getElementById('prepDownload');
+
+  let originalImg = null;
+
+  fileInput.addEventListener('change', (e) => {
+    if(!e.target.files[0]) return;
+    loadImgToCanvas(e.target.files[0], canvas, (img) => {
+      originalImg = img;
+      readout.innerHTML = `Tamaño original: <b>${img.width} x ${img.height} px</b>`;
+      btnResize.disabled = false;
+      btnTrim.disabled = false;
+      btnDownload.disabled = false;
+      updateTargetInfo();
+    });
+  });
+
+  function updateTargetInfo() {
+    if(!originalImg) return;
+    const w_cm = parseFloat(document.getElementById('prepW').value) || 20;
+    const h_cm = parseFloat(document.getElementById('prepH').value) || 25;
+    const dpi = parseInt(document.getElementById('prepDpi').value) || 300;
+    const w_px = Math.round((w_cm / 2.54) * dpi);
+    const h_px = Math.round((h_cm / 2.54) * dpi);
+    targetReadout.innerHTML = `Objetivo cálculo: <b>${w_px} x ${h_px} px</b> a ${dpi} DPI`;
+  }
+
+  document.getElementById('prepW').addEventListener('input', updateTargetInfo);
+  document.getElementById('prepH').addEventListener('input', updateTargetInfo);
+  document.getElementById('prepDpi').addEventListener('change', updateTargetInfo);
+
+  btnResize.addEventListener('click', () => {
+    if(!originalImg) return;
+    const w_cm = parseFloat(document.getElementById('prepW').value);
+    const dpi = parseInt(document.getElementById('prepDpi').value);
+    const targetW = Math.round((w_cm / 2.54) * dpi);
+    const scale = targetW / originalImg.width;
+    const targetH = Math.round(originalImg.height * scale);
+
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(originalImg, 0, 0, targetW, targetH);
+    
+    const tempImg = new Image();
+    tempImg.onload = () => { originalImg = tempImg; };
+    tempImg.src = canvas.toDataURL();
+    readout.innerHTML = `Redimensionado a: <b>${targetW} x ${targetH} px</b>`;
+  });
+
+  btnTrim.addEventListener('click', () => {
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+
+    let top = 0, bottom = h, left = 0, right = w;
+    for(let y=0; y<h; y++){ let rowAlpha=false; for(let x=0; x<w; x++){ if(data[(y*w+x)*4+3]>0){ rowAlpha=true; break; } } if(rowAlpha){ top=y; break; } }
+    for(let y=h-1; y>=0; y--){ let rowAlpha=false; for(let x=0; x<w; x++){ if(data[(y*w+x)*4+3]>0){ rowAlpha=true; break; } } if(rowAlpha){ bottom=y; break; } }
+    for(let x=0; x<w; x++){ let colAlpha=false; for(let y=0; y<h; y++){ if(data[(y*w+x)*4+3]>0){ colAlpha=true; break; } } if(colAlpha){ left=x; break; } }
+    for(let x=w-1; x>=0; x--){ let colAlpha=false; for(let y=0; y<h; y++){ if(data[(y*w+x)*4+3]>0){ colAlpha=true; break; } } if(colAlpha){ right=x; break; } }
+
+    const trimW = right - left + 1, trimH = bottom - top + 1;
+    if(trimW > 0 && trimH > 0 && (trimW < w || trimH < h)) {
+      const trimmedData = ctx.getImageData(left, top, trimW, trimH);
+      canvas.width = trimW; canvas.height = trimH;
+      ctx.putImageData(trimmedData, 0, 0);
+      const tempImg = new Image();
+      tempImg.onload = () => { originalImg = tempImg; };
+      tempImg.src = canvas.toDataURL();
+      readout.innerHTML = `Recortado a: <b>${trimW} x ${trimH} px</b>`;
+    }
+  });
+
+  btnDownload.addEventListener('click', () => download(canvas, 'preparado-dtf.png'));
+})();
+
+// ---------- FONDO ----------
+(function(){
+  const fileInput = document.getElementById('fondoFile');
+  const canvas = document.getElementById('fondoCanvas');
+  const btnApply = document.getElementById('fondoApply');
+  const btnDownload = document.getElementById('fondoDownload');
+  const inputColor = document.getElementById('fondoColor');
+  const inputTol = document.getElementById('fondoTol');
+
+  fileInput.addEventListener('change', (e) => {
+    if(!e.target.files[0]) return;
+    loadImgToCanvas(e.target.files[0], canvas, () => {
+      btnApply.disabled = false;
+      btnDownload.disabled = false;
+    });
+  });
+
+  function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : {r:255, g:255, b:255};
+  }
+
+  btnApply.addEventListener('click', () => {
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+    const targetColor = hexToRgb(inputColor.value);
+    const tol = parseInt(inputTol.value);
+
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      const dist = Math.sqrt(Math.pow(r-targetColor.r,2) + Math.pow(g-targetColor.g,2) + Math.pow(b-targetColor.b,2));
+      if (dist <= tol) data[i + 3] = 0; // Transparente
+    }
+    ctx.putImageData(imgData, 0, 0);
+  });
+
+  btnDownload.addEventListener('click', () => download(canvas, 'sin-fondo.png'));
+})();
+
+// ---------- COLOR ----------
+(function(){
+  const fileInput = document.getElementById('colorFile');
+  const canvas = document.getElementById('colorCanvas');
+  const readout = document.getElementById('colorReadout');
+  const btnApply = document.getElementById('colorApply');
+  const btnDownload = document.getElementById('colorDownload');
+  let originalImgData = null;
+
+  fileInput.addEventListener('change', (e) => {
+    if(!e.target.files[0]) return;
+    loadImgToCanvas(e.target.files[0], canvas, (img, ctx) => {
+      originalImgData = ctx.getImageData(0,0,canvas.width, canvas.height);
+      btnApply.disabled = false; btnDownload.disabled = false;
+    });
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
+      const pixel = ctx.getImageData(x, y, 1, 1).data;
+      const r = pixel[0] / 255, g = pixel[1] / 255, b = pixel[2] / 255;
+      const k = 1 - Math.max(r, g, b);
+      const c = (1 - r - k) / (1 - k) || 0;
+      const m = (1 - g - k) / (1 - k) || 0;
+      const y_cmyk = (1 - b - k) / (1 - k) || 0;
+      readout.innerHTML = `C: <b>${Math.round(c*100)}%</b> M: <b>${Math.round(m*100)}%</b> Y: <b>${Math.round(y_cmyk*100)}%</b> K: <b>${Math.round(k*100)}%</b>`;
+    }
+  });
+
+  btnApply.addEventListener('click', () => {
+    if(!originalImgData) return;
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imgData.data;
+    // Matriz básica para apagar un poco el RGB emulando la tinta (sin modificar ICC oficial)
+    for(let i=0; i<data.length; i+=4) {
+      let r = data[i], g = data[i+1], b = data[i+2];
+      data[i]   = r * 0.9 + g * 0.05 + b * 0.05;
+      data[i+1] = r * 0.05 + g * 0.9 + b * 0.05;
+      data[i+2] = r * 0.05 + g * 0.05 + b * 0.9;
+    }
+    ctx.putImageData(imgData, 0, 0);
+  });
+
+  btnDownload.addEventListener('click', () => download(canvas, 'vista-cmyk.png'));
+})();
+
+// ---------- FORMATO ----------
+(function(){
+  const fileInput = document.getElementById('fmtFile');
+  const canvas = document.getElementById('fmtCanvas');
+  const btnDownload = document.getElementById('fmtDownload');
+  const selOut = document.getElementById('fmtOut');
+  const bgWrap = document.getElementById('fmtBgWrap');
+  const bgInput = document.getElementById('fmtBg');
+  let currentImg = null;
+
+  fileInput.addEventListener('change', (e) => {
+    if(!e.target.files[0]) return;
+    loadImgToCanvas(e.target.files[0], canvas, (img) => {
+      currentImg = img;
+      btnDownload.disabled = false;
+    });
+  });
+
+  selOut.addEventListener('change', (e) => { bgWrap.style.display = e.target.value === 'image/jpeg' ? 'block' : 'none'; });
+
+  btnDownload.addEventListener('click', () => {
+    if(!currentImg) return;
+    const type = selOut.value;
+    const ext = type === 'image/jpeg' ? 'jpg' : 'png';
+
+    if (type === 'image/jpeg') {
+      const ctx = canvas.getContext('2d');
+      // Crear temporal para no perder la imagen cargada en la previsualización
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
+      tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+
+      // Llenar fondo del JPG
+      ctx.fillStyle = bgInput.value;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
+    }
+
+    download(canvas, `convertido.${ext}`, type);
+  });
+})();
+</script>
 </body>
 </html>
